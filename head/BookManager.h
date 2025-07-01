@@ -32,8 +32,8 @@ public:
     // 添加图书
     void addBook(const Book &book);
 
-    // 根据ISBN删除图书
-    // bool removeBook(const std::string &isbn);
+    //根据ISBN删除图书
+    bool removeBook(const std::string &isbn);
 
     // 根据ISBN查找图书
     Book *findBookByIsbn(const std::string &isbn);

@@ -37,14 +37,14 @@ namespace MyAlgorithm {
         quickSort(arr, 0, length - 1);
     }
 
-    // 带自定义比较器的分区函数
-    template<typename T>
-    int partition(T arr[], int low, int high, bool (*compare)(T, T)) {
+    // 带比较器的分区函数
+    template<typename T, typename Compare>
+    int partition(T arr[], int low, int high, Compare compare) {
         T pivot = arr[high];
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
-            if (compare(pivot, arr[j])) {
+            if (compare(arr[j], pivot)) {
                 i++;
                 T temp = arr[i];
                 arr[i] = arr[j];
@@ -57,9 +57,9 @@ namespace MyAlgorithm {
         return i + 1;
     }
 
-    // 带自定义比较器的快速排序
-    template<typename T>
-    void quickSort(T arr[], int low, int high, bool (*compare)(T, T)) {
+    // 带比较器的快速排序
+    template<typename T, typename Compare>
+    void quickSort(T arr[], int low, int high, Compare compare) {
         if (low < high) {
             int pi = partition(arr, low, high, compare);
             quickSort(arr, low, pi - 1, compare);
@@ -67,9 +67,9 @@ namespace MyAlgorithm {
         }
     }
 
-    // 高级版本：支持自定义比较方式
-    template<typename T>
-    void sort(T arr[], int length, bool (*compare)(T, T)) {
+    // 高级版本：支持任意比较器类型
+    template<typename T, typename Compare>
+    void sort(T arr[], int length, Compare compare) {
         quickSort(arr, 0, length - 1, compare);
     }
 }
