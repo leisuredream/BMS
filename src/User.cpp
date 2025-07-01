@@ -2,9 +2,7 @@
 #include <iostream>
 
 void UserManager::addUser(const User &user){
-    static std::string getUsername(const User& user){
-        return user.username;
-    }
+    auto getUsername = [](const User& user) -> std::string { return user.username; };
     auto comparator = [](const std::string& a, const std::string& b) -> bool { return a < b; };
 
     int index = users.binarySearch("leisure", getUsername, comparator);

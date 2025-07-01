@@ -10,15 +10,25 @@ private:
     size_t size;
 
 public:
-    // 构造函数
-    explicit MyVector(size_t initialCapacity = 4)
-        : capacity(initialCapacity), size(0) {
+    template<typename T>
+    MyVector<T>::MyVector(size_t initialCapacity)
+        : capacity(initialCapacity), size(0), hashTableSize(initialCapacity * 2) {
         data = new T[capacity];
+        hashValues = new size_t[hashTableSize];
+        indices = new size_t[hashTableSize];
+
+        // 初始化哈希表为空（用特殊值标记未使用）
+        for (size_t i = 0; i < hashTableSize; ++i) {
+            hashValues[i] = 0; // 0 表示空位（假设 0 不是合法哈希值）
+            indices[i] = static_cast<size_t>(-1); // -1 表示无效索引
+        }
     }
 
-    // 析构函数
-    ~MyVector() {
+    template<typename T>
+    MyVector<T>::~MyVector() {
         delete[] data;
+        delete[] hashValues;
+        delete[] indices;
     }
 
     // 添加元素
@@ -97,4 +107,36 @@ public:
     size_t getSize() const {
         return size;
     }
+
+    // 自定义哈希函数
+    template<typename T>
+    size_t MyVector<T>::customHash(const std::string& str) const {
+        size_t hash = 5381;
+        for (char c : str) {
+            hash = ((hash << 5) + hash) + static_cast<unsigned char>(c); // hash * 33 + c
+        }
+        return hash;
+    }
+
+    template<typename T>
+    void MyVector<T>::rebuildHashTable(std::function<std::string(const T&)> getKey) {
+        // 清空旧哈希表
+        for (size_t i = 0; i < hashTableSize; ++i) {
+            hashValues[i] = 0;
+            indices[i] = static_cast<size_t>(-1);
+        }
+
+        for (size_t i = 0; i < size; ++i) {
+            size_t hashValue = customHash(getKey(data[i]));
+
+            // 线性探测解决冲突
+            size_t pos = hashValue % hashTableSize;
+            while (hashValues[pos] != 0 && hashValues[pos] != hashValue) {
+                pos = (pos + 1) % hashTableSize; // 线性探测
+            }
+
+            hashValues[pos] = hashValue;
+            indices[pos] = i;
+        }
+    }   
 };

@@ -15,10 +15,6 @@ struct User {
 
     User(const std::string &username, const std::string &password, Role role)
         : username(username), password(password), role(role) {}
-
-    static std::string getUsername(const User& user){
-        return user.username;
-    }
 };
 
 class UserManager
