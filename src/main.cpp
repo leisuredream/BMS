@@ -13,6 +13,12 @@ int main(){
         ADMIN
     });
 
+    userManager.addUser({
+        "leisure",
+        "123546",
+        ADMIN
+    });
+
     userManager.printAllUsers();
 
     return 0;
