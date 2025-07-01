@@ -63,8 +63,8 @@ public:
      * @param comp 比较函数，返回 true 表示第一个参数小于第二个参数
      * @return 返回目标值的索引，如果未找到则返回 -1
      */
-    template<typename Key, typename Comparator>
-    int binarySearch(Key target, Key (*getKey)(const T&), Comparator comp) const {
+    template<typename Key, typename GetKey,typename Comparator>
+    int binarySearch(Key target, GetKey getkey, Comparator comp) const {
         size_t left = 0;
         size_t right = size - 1;
 
