@@ -4,8 +4,6 @@
 #include "./MyVector.h"
 #include <string>
 
-#include <string>
-
 enum Role { ADMIN, USER };
 
 struct User {
