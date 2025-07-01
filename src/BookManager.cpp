@@ -6,16 +6,26 @@ void BookManager::addBook(const Book& book) {
     books.push_back(book);
 }
 
-// bool BookManager::removeBook(const std::string& isbn) {
-//     auto it = std::find_if(books.begin(), books.end(),
-//         [&isbn](const Book& book) { return book.getIsbn() == isbn; });
+bool BookManager::removeBook(const std::string& isbn) {
+    // 定义获取ISBN的函数
+    auto getIsbn = [](const Book& book) -> std::string { 
+        return book.getIsbn(); 
+    };
     
-//     if (it != books.end()) {
-//         books.erase(it);
-//         return true;
-//     }
-//     return false;
-// }
+    // 定义比较函数
+    auto comp = [](const std::string& a, const std::string& b) { 
+        return a < b; 
+    };
+    
+    // 使用二分查找找到图书位置
+    int index = books.binarySearch(isbn, getIsbn, comp);
+    
+    if (index >= 0) {
+        books.removeAt(index);
+        return true;
+    }
+    return false;
+}
 
 Book* BookManager::findBookByIsbn(const std::string& isbn) {
     // 定义获取键值的函数
