@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-enum Role { ADMIN, USER };
+enum Role { USER, ADMIN };
 
 struct User {
     std::string username;
@@ -33,6 +33,9 @@ public:
     bool updateUser(const std::string &oldUsername, const User &newUser);
     void printAllUsers() const;
     const User* findUser(const std::string &username) const;
+    MyVector<User> fuzzyFindUsers(const std::string& keyword) const;
+    MyVector<User> findAndSortUsers(const std::string& keyword, bool ascending = true) const;
+    bool adminRemoveUsers(const MyVector<std::string>& usernames);
 };
 
 #endif // USER_H
