@@ -90,6 +90,10 @@ public:
         }
 
         --size;
+
+        if constexpr (std::is_same<T, User>::value) {
+            rebuildHashTable();
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 
 #include "./MyVector.h"
 #include <string>
+#include <iostream>
 
 enum Role { ADMIN, USER };
 
@@ -15,6 +16,11 @@ struct User {
 
     User(const std::string &username, const std::string &password, Role role)
         : username(username), password(password), role(role) {}
+
+    void print() const {
+        std::cout << "Username: " << username
+                  << ", Role: " << (role == ADMIN ? "ADMIN" : "USER") << std::endl;
+    }
 };
 
 class UserManager
@@ -26,6 +32,7 @@ public:
     bool removeUser(const std::string &username);
     bool updateUser(const std::string &oldUsername, const User &newUser);
     void printAllUsers() const;
+    const User* findUser(const std::string &username) const;
 };
 
 #endif // USER_H

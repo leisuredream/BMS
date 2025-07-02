@@ -19,6 +19,28 @@ int main(){
         ADMIN
     });
 
+    userManager.updateUser("leisure", {
+        "leisure123",
+        "654321",
+        USER
+    });
+
+    const User* user = userManager.findUser("leisure");
+    if (user) {
+        user->print();
+    } else {
+        std::cout << "未找到用户" << std::endl;
+    }
+
+    user = userManager.findUser("leisure123");
+    if (user) {
+        user->print();
+    } else {
+        std::cout << "未找到用户" << std::endl;
+    }
+
+    userManager.removeUser("leisure123");
+
     userManager.printAllUsers();
 
     return 0;
