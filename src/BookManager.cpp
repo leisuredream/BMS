@@ -102,7 +102,7 @@ Book* BookManager::findBookByIsbn(const std::string& isbn) {
         return a < b; 
     };
     
-    int index = books.binarySearch(isbn, getIsbn, comp);
+    int index = books.hashFindByIsbn(isbn);
     return index >= 0 ? &books[index] : nullptr;
 }
 
