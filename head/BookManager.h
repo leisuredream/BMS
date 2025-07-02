@@ -32,6 +32,11 @@ public:
     // 添加图书
     void addBook(const Book &book);
 
+    // 修改图书信息
+    bool updateBook(const std::string& isbn, const Book& updatedBook);
+    // 根据ISBN修改图书的特定信息
+    bool updateBookField(const std::string& isbn, const std::string& field, const std::string& newValue);
+
     //根据ISBN删除图书
     bool removeBook(const std::string &isbn);
 

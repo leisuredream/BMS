@@ -27,6 +27,70 @@ bool BookManager::removeBook(const std::string& isbn) {
     return false;
 }
 
+bool BookManager::updateBook(const std::string& isbn, const Book& updatedBook) {
+    // 定义获取ISBN的函数
+    auto getIsbn = [](const Book& book) -> std::string { 
+        return book.getIsbn(); 
+    };
+    
+    // 定义比较函数
+    auto comp = [](const std::string& a, const std::string& b) { 
+        return a < b; 
+    };
+    
+    // 使用二分查找找到图书位置
+    int index = books.binarySearch(isbn, getIsbn, comp);
+    
+    // 如果找到图书且新ISBN与原ISBN相同
+    if (index >= 0 && updatedBook.getIsbn() == isbn) {
+        books[index] = updatedBook;
+        return true;
+    }
+    return false;
+}
+
+bool BookManager::updateBookField(const std::string& isbn, const std::string& field, const std::string& newValue) {
+    // 定义获取ISBN的函数
+    auto getIsbn = [](const Book& book) -> std::string { 
+        return book.getIsbn(); 
+    };
+    
+    // 定义比较函数
+    auto comp = [](const std::string& a, const std::string& b) { 
+        return a < b; 
+    };
+    
+    // 使用二分查找找到图书位置
+    int index = books.binarySearch(isbn, getIsbn, comp);
+    
+    if (index >= 0) {
+        try {
+            if (field == "title") {
+                books[index].setTitle(newValue);
+            }
+            else if (field == "author") {
+                books[index].setAuthor(newValue);
+            }
+            else if (field == "publisher") {
+                books[index].setPublisher(newValue);
+            }
+            else if (field == "year") {
+                // 将字符串转换为整数
+                int year = std::stoi(newValue);
+                books[index].setPublishYear(year);
+            }
+            else {
+                return false; // 不支持的字段
+            }
+            return true;
+        }
+        catch (const std::exception&) {
+            return false; // 更新失败（可能是年份格式错误）
+        }
+    }
+    return false;
+}
+
 Book* BookManager::findBookByIsbn(const std::string& isbn) {
     // 定义获取键值的函数
     auto getIsbn = [](const Book& book) -> std::string { 
