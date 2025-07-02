@@ -7,6 +7,9 @@
 
 // 前置声明 User
 struct User;
+// 前置声明 Book
+struct Book;
+
 
 template<typename T>
 class MyVector {
@@ -73,6 +76,10 @@ public:
         if constexpr (std::is_same<T, User>::value) {
             rebuildHashTable();
         }
+
+        if constexpr (std::is_same<T, Book>::value) {
+            rebuildBookHashTable();
+        }
     }
 
     //删除元素
@@ -93,6 +100,10 @@ public:
 
         if constexpr (std::is_same<T, User>::value) {
             rebuildHashTable();
+        }
+
+        if constexpr (std::is_same<T, Book>::value) {
+            rebuildBookHashTable();
         }
     }
 
@@ -189,6 +200,41 @@ public:
             pos = (pos + 1) % hashTableSize;
         }
 
+        return -1;
+    }
+
+    template<typename U = T>
+    std::enable_if_t<std::is_same<U, Book>::value, void>
+    rebuildBookHashTable() {
+        for (size_t i = 0; i < hashTableSize; ++i) {
+            hashValues[i] = 0;
+            indices[i] = static_cast<size_t>(-1);
+        }
+        for (size_t i = 0; i < size; ++i) {
+            size_t hashValue = customHash(data[i].getIsbn());
+            size_t pos = hashValue % hashTableSize;
+            while (hashValues[pos] != 0 && hashValues[pos] != hashValue) {
+                pos = (pos + 1) % hashTableSize;
+            }
+            hashValues[pos] = hashValue;
+            indices[pos] = i;
+        }
+    }
+
+    template<typename U = T>
+    std::enable_if_t<std::is_same<U, Book>::value, int>
+    hashFindByIsbn(const std::string& isbn) const {
+        size_t targetHash = customHash(isbn);
+        size_t pos = targetHash % hashTableSize;
+        for (size_t i = 0; i < hashTableSize; ++i) {
+            if (hashValues[pos] == 0) break;
+            if (hashValues[pos] == targetHash) {
+                if (data[indices[pos]].getIsbn() == isbn) {
+                    return static_cast<int>(indices[pos]);
+                }
+            }
+            pos = (pos + 1) % hashTableSize;
+        }
         return -1;
     }
 };
