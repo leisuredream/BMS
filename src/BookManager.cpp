@@ -1,6 +1,9 @@
 #include "../head/BookManager.h"
 #include <iterator>
 #include "../head/Mysort.h"
+#include <fstream>
+#include <sstream>
+#include <iomanip>
 
 void BookManager::addBook(const Book& book) {
     books.push_back(book);
@@ -322,4 +325,95 @@ MyVector<Book> BookManager::sortSearchResults(const MyVector<Book>& searchResult
     MyVector<Book> sortedResults = searchResults;
     sortBooks(sortedResults, sortBy, order);
     return sortedResults;
+}
+
+bool BookManager::importBooksFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "无法打开文件: " << filename << std::endl;
+        return false;
+    }
+
+    std::string line;
+    int successCount = 0;
+    int totalCount = 0;
+    
+    // 跳过标题行（如果有的话）
+    std::getline(file, line);
+    
+    while (std::getline(file, line)) {
+        totalCount++;
+        Book book;
+        if (parseBookLine(line, book)) {
+            try {
+                addBook(book);
+                successCount++;
+            } catch (const std::exception& e) {
+                std::cerr << "添加图书失败: " << e.what() << std::endl;
+                continue;
+            }
+        }
+    }
+
+    file.close();
+    std::cout << "导入完成: 成功 " << successCount 
+              << "/" << totalCount << " 条记录" << std::endl;
+    return successCount > 0;
+}
+
+bool BookManager::parseBookLine(const std::string& line, Book& book) {
+    try {
+        std::string value;
+        
+        // 提取书名
+        size_t titleStart = line.find("'书名': '") + 7;
+        size_t titleEnd = line.find("'", titleStart);
+        book.setTitle(line.substr(titleStart, titleEnd - titleStart));
+
+        // 提取作者
+        size_t authorStart = line.find("'作者': '") + 7;
+        size_t authorEnd = line.find("'", authorStart);
+        book.setAuthor(line.substr(authorStart, authorEnd - authorStart));
+
+        // 提取出版社
+        size_t pubStart = line.find("'出版社': '") + 8;
+        size_t pubEnd = line.find("'", pubStart);
+        book.setPublisher(line.substr(pubStart, pubEnd - pubStart));
+
+        // 提取ISBN
+        size_t isbnStart = line.find("'ISBN': '") + 8;
+        size_t isbnEnd = line.find("'", isbnStart);
+        book.setIsbn(line.substr(isbnStart, isbnEnd - isbnStart));
+
+        // 提取出版年限
+        size_t yearStart = line.find("'出版年限': ") + 8;
+        size_t yearEnd = line.find("}", yearStart);
+        int year = std::stoi(line.substr(yearStart, yearEnd - yearStart));
+        book.setPublishYear(year);
+
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "解析图书数据失败: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool BookManager::exportBooksToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "无法创建文件: " << filename << std::endl;
+        return false;
+    }
+
+    for (size_t i = 0; i < books.getSize(); i++) {
+        const Book& book = books[i];
+        file << "{'书名': '" << book.getTitle() << "', "
+             << "'作者': '" << book.getAuthor() << "', "
+             << "'出版社': '" << book.getPublisher() << "', "
+             << "'ISBN': '" << book.getIsbn() << "', "
+             << "'出版年限': " << book.getPublishYear() << "}\n";
+    }
+
+    file.close();
+    return true;
 }

@@ -28,6 +28,9 @@ private:
     // 添加私有排序辅助方法
     void sortBooks(MyVector<Book> &bookList, SortBy sortBy, SortOrder order) const;
 
+    // 添加私有辅助方法
+    bool parseBookLine(const std::string& line, Book& book);
+
 public:
     // 添加图书
     void addBook(const Book &book);
@@ -63,6 +66,10 @@ public:
 
     // 获取图书总数
     size_t getBookCount() const;
+
+    // 添加新方法
+    bool importBooksFromFile(const std::string& filename);
+    bool exportBooksToFile(const std::string& filename) const;
 };
 
 #endif // BOOK_MANAGER_H
